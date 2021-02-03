@@ -6,6 +6,7 @@ using Couchbase;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading;
+using System.Diagnostics;
 
 namespace import
 {
@@ -31,6 +32,7 @@ namespace import
             var collection = library.DefaultCollection();
             var sem = new SemaphoreSlim(32); // max concurrent requests
             await subscription.Run(async batch => {
+                var sp = Stopwatch.StartNew();
                 var tasks = new List<Task>();
                 foreach(var item in batch.Items){
                     await sem.WaitAsync();
@@ -39,6 +41,7 @@ namespace import
                     tasks.Add(t);
                 }
                 await Task.WhenAll(tasks.ToArray());
+                System.Console.WriteLine($"Wrote {batch.Items.Count} in {sp.Elapsed}");
             });
         }
     }
