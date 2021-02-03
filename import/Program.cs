@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Couchbase;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace import
 {
@@ -16,23 +17,28 @@ namespace import
             {
                 Urls = new[]{"https://i.huge.ravendb.run"},
                 Database = "Library",
-                Certificate = new X509Certificate2(@"C:\Users\Oren\Downloads\RavenDB\cluster.server.certificate.huge.pfx")
+                Certificate = new X509Certificate2(@"/home/ubuntu/RavenDB/Server/cluster.server.certificate.huge.pfx")
             };
             store.Initialize();
 
             var subscription = store.Subscriptions.GetSubscriptionWorker<JObject>(new SubscriptionWorkerOptions("All"){
-                MaxDocsPerBatch = 1024,
+                MaxDocsPerBatch = 4096,
             });
 
 
             var cluster = await Cluster.ConnectAsync("172.31.38.235,172.31.47.223,172.31.47.54","Administrator", "Library");
             var library = await cluster.BucketAsync("Library");
             var collection = library.DefaultCollection();
-
+            var sem = new SemaphoreSlim(32); // max concurrent requests
             await subscription.Run(async batch => {
+                var tasks = new List<Task>();
                 foreach(var item in batch.Items){
-                    await collection.UpsertAsync(item.Id, item.Result);
+                    await sem.WaitAsync();
+                    var t = collection.UpsertAsync(item.Id, item.Result)
+                        .ContinueWith(_ => sem.Release());
+                    tasks.Add(t);
                 }
+                await Task.WhenAll(tasks.ToArray());
             });
         }
     }
