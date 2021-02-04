@@ -26,17 +26,10 @@ request = function()
 		index = 1
 	end 
 	item = users[index]
-	local page = 0
-	local pageSize = 10
-	--local reqs = 1
+	path = "/databases/Library/queries" 
+	local body = '{"Query": "from index \'Annotations\'  where startsWith(id(), $prefix) limit 10", "QueryParameters": { "prefix": "Annotations/' .. item.id .. '"}}"'
 
-	path = "/annotations/user/" .. page * pageSize ..  "/" .. pageSize .. "/?userId=" .. item.id
-	r[1] = wrk.format(nil, path)
+	r[1] = wrk.format("POST", path,  wrk.headers, body)
 
-	--for i=1,item.books,pageSize do
-	--	path = "/annotations/user/" .. i * pageSize ..  "/" .. pageSize .. "/?userId=" .. item.id
-	--	r[reqs] = wrk.format(nil, path)
-	--	reqs = reqs + 1
-	--end
 	return table.concat(r)
 end

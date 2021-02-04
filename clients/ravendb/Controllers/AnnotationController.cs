@@ -26,7 +26,7 @@ namespace RavenLibrary.Controllers
         [HttpGet("/annotations/user/{skip}/{take}")]
         public AsyncQueryResult<Annotation> GetUserAnnotationsRange(string userId, int skip, int take)
         {
-            var query = _session.Advanced.AsyncDocumentQuery<Annotation>("Annotations/ByUser")
+            var query = _session.Advanced.AsyncDocumentQuery<Annotation>(indexName: "Annotations/ByUser")
                 .Skip(skip)
                 .Take(take)
                 .WhereEquals("UserId", userId);
@@ -37,7 +37,7 @@ namespace RavenLibrary.Controllers
         [HttpGet("/annotations/userbook/{skip}/{take}")]
         public AsyncQueryResult<Annotation> GetUserBookAnnotations(string userBookId, int skip, int take)
         {
-            var query = _session.Advanced.AsyncDocumentQuery<Annotation>()
+            var query = _session.Advanced.AsyncDocumentQuery<Annotation>(collectionName: "Annotations")
                 .Skip(skip)
                 .Take(take)
                 .WhereStartsWith("id()", $"Annotations/{userBookId}/");
