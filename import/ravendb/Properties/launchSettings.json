@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "import": {
+      "commandName": "Project",
+      "commandLineArgs": "--dir G:\\Datasets\\Kobo --dbname Kobo --url http://127.0.0.1:8080 --maxUsers 1000000"
+    }
+  }
+}
