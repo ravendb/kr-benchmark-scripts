@@ -23,6 +23,12 @@ namespace RavenLibrary.Controllers
         }
 
     
+        [HttpGet("/user")]
+        public async Task<object> GetUserAnnotationsRange(string userId)
+        {
+            return await _session.LoadAsync<User>(userId);
+        }
+
         [HttpGet("/annotations/user/{skip}/{take}")]
         public AsyncQueryResult<Annotation> GetUserAnnotationsRange(string userId, int skip, int take)
         {

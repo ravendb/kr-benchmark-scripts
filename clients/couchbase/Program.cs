@@ -14,7 +14,7 @@ namespace CouchLibrary
     {
         public static async Task Main(string[] args)
         {
-            Startup.Cluster = await Cluster.ConnectAsync("172.31.37.116,172.31.37.27,172.31.47.166", "Administrator", "Library");
+            Startup.Cluster = await Cluster.ConnectAsync("172.31.37.146,172.31.44.133,172.31.41.235", "Administrator", "Library");
             Startup.TheBucket = await Startup.Cluster.BucketAsync("Library");
             CreateHostBuilder(args).Build().Run();
         }
