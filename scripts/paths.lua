@@ -11,9 +11,10 @@ end
 
 
 request = function()
-    wrk.path = iter()
-    if wrk.path = nil then -- just read them in a loop
+    local path = iter()
+    if path == nil then -- just read them in a loop
         iter = io.lines(file)
-        wrk.path = iter()
+        path = iter()
     end
+    return wrk.format('GET', path)
 end

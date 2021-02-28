@@ -13,11 +13,11 @@
  
  
  request = function()
-    wrk.path = path   
-    wrk.body = iter()
-    if wrk.body = nil then -- just read them in a loop
+    local body = iter()
+    if body == nil then -- just read them in a loop
          iter = io.lines(file)
-         wrk.body = iter()
+         body = iter()
     end
+    return wrk.format('POST', path, nil, body)
  end
  
